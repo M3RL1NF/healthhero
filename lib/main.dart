@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'screens/LearnScreen.dart';
+import 'screens/ChallengeScreen.dart';
+import 'screens/QuizScreen.dart';
+import 'screens/SettingScreen.dart';
+import 'screens/AchievementScreen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,98 +15,73 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Health Hero',
       theme: ThemeData(
-        primarySwatch: Colors.deepPurple,
+        primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Health Hero'),
+      home: const MyBottomNavigationBar(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  final String title;
+class MyBottomNavigationBar extends StatefulWidget {
+  const MyBottomNavigationBar({Key? key}) : super(key: key);
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  MyBottomNavigationBarState createState() => MyBottomNavigationBarState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
+  int _currentIndex = 0;
+  final List<Widget> _children = [
+    const LearnScreen(key: Key('learn')),
+    const QuizScreen(key: Key('quiz')),
+    const ChallengeScreen(key: Key('challenge')),
+    const AchievementScreen(key: Key('achievement')),
+    const SettingScreen(key: Key('setting')),
+  ];
 
-  void _incrementCounter() {
+  void onTabTapped(int index) {
     setState(() {
-      _counter++;
+      _currentIndex = index;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Column(
-        children: [
-          // Add your calendar widget here
-          // Example:
-          // YourCalendarWidget(),
-          Expanded(
-            child: ListView.builder(
-              itemCount: 5, // Assuming you have 5 card-like elements
-              itemBuilder: (context, index) {
-                return Card(
-                  child: ListTile(
-                    title: Text('Title $index'),
-                    subtitle: Text('Description $index'),
-                    trailing: SizedBox(
-                      width: 100,
-                      child: LinearProgressIndicator(
-                        value: (_counter + index) % 100 / 100,
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
+      body: _children[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Colors.blue,
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.black,
+        showSelectedLabels: false, 
+        showUnselectedLabels: false,
+        onTap: onTabTapped,
+        currentIndex: _currentIndex,
+        items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.school),
             label: 'Lernzentrum',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.people_sharp),
-            label: 'Community',
+            icon: Icon(Icons.quiz),
+            label: 'Quiz',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.home, size: 40),
-            label: 'Challenge',
+            icon: Icon(Icons.event),
+            label: 'Challenges',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.emoji_events),
-            label: 'Trophäe',
+            label: 'Achievements',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
-            label: 'Einstellungen',
+            label: 'Settings',
           ),
         ],
-        selectedItemColor: Colors.deepPurple,
-        unselectedItemColor: Colors.grey,
-        onTap: (index) {
-          // Handle navigation button presses here
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
       ),
     );
   }
