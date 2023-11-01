@@ -1,40 +1,22 @@
 import 'package:flutter/material.dart';
-
-class AGBScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('AGB')),
-      body: Center(child: Text('AGB content goes here...')),
-    );
-  }
-}
-
-class DSGVOScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('DSGVO')),
-      body: Center(child: Text('DSGVO content goes here...')),
-    );
-  }
-}
+import 'package:healthhero/screens/DSGVOScreen.dart';
+import 'package:healthhero/screens/AGBScreen.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({Key? key}) : super(key: key);
 
   @override
-  _SettingScreenState createState() => _SettingScreenState();
+  SettingScreenState createState() => SettingScreenState();
 }
 
-class _SettingScreenState extends State<SettingScreen> {
-  bool _fitnessAndSport = false;
-  bool _nutritionAndHealth = false;
-  TextEditingController _nameController = TextEditingController();
+class SettingScreenState extends State<SettingScreen> {
+  bool _fitnessAndSport = true;
+  bool _nutritionAndHealth = true;
+  final TextEditingController _nameController = TextEditingController(text: 'PimmelBirne');
   DateTime _birthday = DateTime.now();
-  String _gender = 'Male';
-  bool _selectButton1 = false;
-  bool _selectButton2 = false;
+  String _gender = 'Männlich';
+  bool _agbAccepted = true;
+  bool _dsgvoAccepted = true;
 
   @override
   Widget build(BuildContext context) {
@@ -46,11 +28,11 @@ class _SettingScreenState extends State<SettingScreen> {
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-            /// Section 1: Persöhnliche Daten
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
+            /// Section 1: Persönliche Daten
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
               child: Text(
-                'Persöhnliche Daten',
+                'Persönliche Daten',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
             ),
@@ -66,7 +48,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: TextField(
                       controller: _nameController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         labelText: 'Name',
                         border: OutlineInputBorder(),
                       ),
@@ -76,7 +58,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: DropdownButtonFormField<String>(
                       value: _gender,
-                      items: <String>['Male', 'Female', 'Other'].map((String value) {
+                      items: <String>['Männlich', 'Weiblich', 'Divers'].map((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
                           child: Text(value),
@@ -87,8 +69,8 @@ class _SettingScreenState extends State<SettingScreen> {
                           _gender = newValue!;
                         });
                       },
-                      decoration: InputDecoration(
-                        labelText: 'Gender',
+                      decoration: const InputDecoration(
+                        labelText: 'Geschlecht',
                         border: OutlineInputBorder(),
                       ),
                     ),
@@ -97,8 +79,8 @@ class _SettingScreenState extends State<SettingScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                     child: ListTile(
                       contentPadding: EdgeInsets.zero,
-                      title: Text('Birthday: ${_birthday.toLocal().toIso8601String().substring(0, 10)}'),
-                      trailing: Icon(Icons.calendar_today),
+                      title: Text('Geburtsdatum: ${_birthday.toLocal().toIso8601String().substring(0, 10)}'),
+                      trailing: const Icon(Icons.calendar_today),
                       onTap: () async {
                         DateTime? pickedDate = await showDatePicker(
                           context: context,
@@ -106,28 +88,29 @@ class _SettingScreenState extends State<SettingScreen> {
                           firstDate: DateTime(1900),
                           lastDate: DateTime.now(),
                         );
-                        if (pickedDate != null && pickedDate != _birthday)
+                        if (pickedDate != null && pickedDate != _birthday) {
                           setState(() {
                             _birthday = pickedDate;
                           });
+                        }
                       },
                     ),
                   ),
                 ],
               ),
             ),
-            SizedBox(height: 20), // Spacer
+            const SizedBox(height: 20), // Spacer
 
             // Section 2: Auswahl der Funktionalität
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
               child: Text(
                 'Auswahl der Funktionalität',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
             ),
             CheckboxListTile(
-              title: Text('Fitness und Sport'),
+              title: const Text('Fitness und Sport'),
               value: _fitnessAndSport,
               onChanged: (bool? value) {
                 setState(() {
@@ -136,7 +119,7 @@ class _SettingScreenState extends State<SettingScreen> {
               },
             ),
             CheckboxListTile(
-              title: Text('Ernährung und Gesundheit'),
+              title: const Text('Ernährung und Gesundheit'),
               value: _nutritionAndHealth,
               onChanged: (bool? value) {
                 setState(() {
@@ -144,11 +127,11 @@ class _SettingScreenState extends State<SettingScreen> {
                 });
               },
             ),
-            SizedBox(height: 20), // Spacer
+            const SizedBox(height: 20), // Spacer
 
             // Section 3: Datenschutz
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
               child: Text(
                 'Datenschutz',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -156,10 +139,10 @@ class _SettingScreenState extends State<SettingScreen> {
             ),
             ListTile(
               leading: Checkbox(
-                value: _selectButton1,
+                value: _agbAccepted,
                 onChanged: (bool? value) {
                   setState(() {
-                    _selectButton1 = value!;
+                    _agbAccepted = value!;
                   });
                 },
               ),
@@ -169,38 +152,38 @@ class _SettingScreenState extends State<SettingScreen> {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => AGBScreen()),
+                        MaterialPageRoute(builder: (context) => const AGBScreen()),
                       );
                     },
-                    child: Text(
-                      'AGB',
+                    child: const Text(
+                      'AGBs',
                       style: TextStyle(color: Colors.blue),
                     ),
                   ),
-                  Text(' gelesen und akzeptiert'),
+                  const Text(' gelesen und akzeptiert'),
                 ],
               ),
             ),
             ListTile(
               leading: Checkbox(
-                value: _selectButton2,
+                value: _dsgvoAccepted,
                 onChanged: (bool? value) {
                   setState(() {
-                    _selectButton2 = value!;
+                    _dsgvoAccepted = value!;
                   });
                 },
               ),
               title: Row(
                 children: [
-                  Text('Datenverarbeitung gemäß '),
+                  const Text('Datenverarbeitung gemäß '),
                   InkWell(
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => DSGVOScreen()),
+                        MaterialPageRoute(builder: (context) => const DSGVOScreen()),
                       );
                     },
-                    child: Text(
+                    child: const Text(
                       'DSGVO',
                       style: TextStyle(color: Colors.blue),
                     ),
@@ -208,14 +191,14 @@ class _SettingScreenState extends State<SettingScreen> {
                 ],
               ),
             ),
-            SizedBox(height: 20), // Spacer
+            const SizedBox(height: 20), // Spacer
 
             // Save Button
             ElevatedButton(
               onPressed: () {
                 // TODO: Save the changes to the database
               },
-              child: Text('Speichern'),
+              child: const Text('Speichern'),
             ),
           ],
         ),
@@ -224,4 +207,4 @@ class _SettingScreenState extends State<SettingScreen> {
   }
 }
 
-void main() => runApp(MaterialApp(home: SettingScreen()));
+void main() => runApp(const MaterialApp(home: SettingScreen()));
