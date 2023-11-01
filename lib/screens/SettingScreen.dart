@@ -209,6 +209,8 @@ class SettingScreenState extends State<SettingScreen> {
             },
             child: const Text('Alle Quizzes und Challenges zurücksetzten'),
           ),
+          
+          const SizedBox(height: 5), // Spacer
         ],
       ),
     );
