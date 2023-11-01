@@ -1,0 +1,32 @@
+final List<Map<String, dynamic>> challengeSeeds = [
+  {
+    'id': 1,
+    'date': DateTime.now().toIso8601String(),
+    'title': 'Challenge 1',
+    'description': 'Description for Challenge 1',
+    'explanation': 'Explanation for Challenge 1',
+    'category': 'Sport',
+    'progress': '{1: "10", 2: "20", 3: "30", 4: "40", 5: "50"}',
+    'userProgress': 0,
+  },
+  {
+    'id': 2,
+    'date': DateTime.now().toIso8601String(),
+    'title': 'Challenge 2',
+    'description': 'Description for Challenge 2',
+    'explanation': 'Explanation for Challenge 2',
+    'category': 'Nutrition',
+    'progress': '{1: "10", 2: "20", 3: "30", 4: "40", 5: "50"}',
+    'userProgress': 0,
+  },
+  {
+    'id': 3,
+    'date': DateTime.now().toIso8601String(),
+    'title': 'Challenge 3',
+    'description': 'Description for Challenge 3',
+    'explanation': 'Explanation for Challenge 3',
+    'category': 'Nutrition',
+    'progress': '{1: "10", 2: "20", 3: "30", 4: "40", 5: "50"}',
+    'userProgress': 0,
+  },
+];

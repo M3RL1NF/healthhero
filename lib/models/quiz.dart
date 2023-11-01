@@ -1,13 +1,13 @@
 class Quiz {
   final int id;
-  final DateTime date;
+  DateTime date;
   final String question;
   final String optionA;
   final String optionB;
   final String optionC;
   final String optionD;
-  final String solution;
-  final String answer;
+  final int solution;
+  int? answer;
 
   Quiz({
     required this.id,
@@ -18,8 +18,16 @@ class Quiz {
     required this.optionC,
     required this.optionD,
     required this.solution,
-    required this.answer,
+    this.answer,
   });
+
+  void setDate(DateTime newDate) {
+    date = newDate;
+  }
+
+  void setAnswer(int? newAnswer) {
+    answer = newAnswer;
+  }
 
   Map<String, dynamic> toMap() {
     return {

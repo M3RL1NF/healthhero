@@ -1,12 +1,12 @@
 class Challenge {
   final int id;
-  final DateTime date;
+  DateTime date;
   final String title;
   final String description;
   final String explanation;
   final String category;
-  final List<List<int>> progress;
-  final int userProgress;
+  final Map<int, String> progress;
+  int userProgress;
 
   Challenge({
     required this.id,
@@ -18,6 +18,14 @@ class Challenge {
     required this.progress,
     required this.userProgress,
   });
+
+  void setDate(DateTime newDate) {
+    date = newDate;
+  }
+
+  void setUserProgress(int progress) {
+    userProgress = progress;
+  }
 
   Map<String, dynamic> toMap() {
     return {
