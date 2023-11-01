@@ -1,7 +1,7 @@
 import 'package:sqflite/sqflite.dart';
 import '../models/challenge.dart';
 import 'DatabaseHelper.dart';
-import 'package:healthhero/controllers/ChallengeController.dart';
+import '../controllers/ChallengeController.dart';
 
 class ChallengeHelper {
   static const String tableName = 'challenges';
@@ -18,19 +18,38 @@ class ChallengeHelper {
         description: maps[i]['description'],
         explanation: maps[i]['explanation'],
         category: maps[i]['category'],
-        progress: maps[i]['progress'],
+        progress: Challenge.stringToProgressMap(maps[i]['progress']),
         userProgress: maps[i]['userProgress'],
       );
     });
   }
 
-  static Future<void> updateUserProgress(int id) async {
+  static Future<void> increaseUserProgress(int id) async {
     final Database db = await DatabaseHelper.database;
-    await db.rawUpdate('''
-      UPDATE challenges 
-      SET userProgress = userProgress + 1 
-      WHERE id = ?
-    ''', [id]);
+    List<Challenge> challenges = await getChallenges();
+    Challenge currentChallenge = challenges.firstWhere((challenge) => challenge.id == id);
+
+    if (currentChallenge.userProgress < currentChallenge.progress.length) {
+      await db.rawUpdate('''
+        UPDATE challenges 
+        SET userProgress = userProgress + 1 
+        WHERE id = ?
+      ''', [id]);
+    }
+  }
+
+  static Future<void> decreaseUserProgress(int id) async {
+    final Database db = await DatabaseHelper.database;
+    List<Challenge> challenges = await getChallenges();
+    Challenge currentChallenge = challenges.firstWhere((challenge) => challenge.id == id);
+
+    if (currentChallenge.userProgress > 0) {
+      await db.rawUpdate('''
+        UPDATE challenges 
+        SET userProgress = userProgress - 1 
+        WHERE id = ?
+      ''', [id]);
+    }
   }
 
   static Future<List<Challenge>> getDailyChallenges(DateTime currentDate) async {

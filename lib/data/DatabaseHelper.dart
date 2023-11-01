@@ -43,7 +43,7 @@ class DatabaseHelper {
             answer TEXT
           )
         ''');
-        await db.execute('''
+      await db.execute('''
           CREATE TABLE settings(
             id INTEGER PRIMARY KEY,
             categorySport INTEGER,
@@ -52,29 +52,25 @@ class DatabaseHelper {
             userDateOfBirth TEXT,
             userGender TEXT,
             readAGB INTEGER,
-            readDSGVO INTEGER
+            readDSGVO INTEGER,
+            dailyQuizzes INTEGER,
+            dailyChallenges INTEGER
           )
         ''');
-      await seedDatabase(db);
     });
   }
 
   static Future<void> seedDatabase(Database db) async {
-  for (var challengeSeed in challengeSeeds) {
-    await db.insert('challenges', challengeSeed);
-  }
+    for (var challengeSeed in challengeSeeds) {
+      await db.insert('challenges', challengeSeed);
+    }
 
-  for (var quizSeed in quizSeeds) {
-    await db.insert('quizzes', quizSeed);
-  }
+    for (var quizSeed in quizSeeds) {
+      await db.insert('quizzes', quizSeed);
+    }
 
-  for (var settingSeed in settingSeeds) {
-    await db.insert('settings', settingSeed);
+    for (var settingSeed in settingSeeds) {
+      await db.insert('settings', settingSeed);
+    }
   }
-}
-}
-
-void main() async {
-  final database = await DatabaseHelper.initDatabase();
-  await DatabaseHelper.seedDatabase(database);
 }

@@ -4,8 +4,12 @@ import 'screens/ChallengeScreen.dart';
 import 'screens/QuizScreen.dart';
 import 'screens/SettingScreen.dart';
 import 'screens/AchievementScreen.dart';
+import 'package:healthhero/data/DatabaseHelper.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final database = await DatabaseHelper.initDatabase();
+  await DatabaseHelper.seedDatabase(database);
   runApp(const MyApp());
 }
 
