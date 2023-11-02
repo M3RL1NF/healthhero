@@ -21,7 +21,36 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Health Hero',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        brightness: Brightness.dark,
+        primaryColor: const Color.fromARGB(255, 33, 243, 191),
+        primarySwatch: const MaterialColor(0xFF21F3BF, {
+          50: Color(0xFFE0F7F2),
+          100: Color(0xFFB3F0E4),
+          200: Color(0xFF80E9D4),
+          300: Color(0xFF4DE2C5),
+          400: Color(0xFF26DDB9),
+          500: Color(0xFF21F3BF),
+          600: Color(0xFF0FC29A),
+          700: Color(0xFF0A9B7A),
+          800: Color(0xFF07735A),
+          900: Color(0xFF055D46),
+        }),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all<Color?>(Color.fromARGB(255, 33, 243, 191)),
+          ),
+        ),
+        textButtonTheme: TextButtonThemeData(
+          style: ButtonStyle(
+            foregroundColor: MaterialStateProperty.all<Color?>(Color.fromARGB(255, 33, 243, 191)),
+          ),
+        ),
+        appBarTheme: const AppBarTheme(
+          titleTextStyle: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
       home: const MyBottomNavigationBar(),
     );
@@ -54,13 +83,18 @@ class MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).elevatedButtonTheme.style?.backgroundColor?.resolve({}) ?? Colors.white,
+        title: const Text('HEALTH HERO'),
+      ),
       body: _children[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.blue,
-        selectedItemColor: Colors.white,
+        backgroundColor: Theme.of(context).primaryColor,
+        selectedItemColor: Colors.black,
         unselectedItemColor: Colors.black,
-        showSelectedLabels: false, 
+        selectedIconTheme: const IconThemeData(color: Colors.white),
+        showSelectedLabels: false,
         showUnselectedLabels: false,
         onTap: onTabTapped,
         currentIndex: _currentIndex,

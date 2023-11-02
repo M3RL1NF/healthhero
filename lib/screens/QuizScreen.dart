@@ -38,7 +38,11 @@ class QuizScreenState extends State<QuizScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Health Hero'),
+        title: const Text('Tägliches Quiz'),
+        titleTextStyle: const TextStyle(
+          color: Color.fromARGB(255, 255, 255, 255),
+          fontWeight: FontWeight.bold,
+        ),
       ),
       body: Center(
         child: FutureBuilder<Quiz?>(

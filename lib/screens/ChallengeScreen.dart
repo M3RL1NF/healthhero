@@ -15,7 +15,11 @@ class ChallengeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Health Hero'),
+        title: const Text('Tägliche Challenges'),
+        titleTextStyle: const TextStyle(
+          color: Color.fromARGB(255, 255, 255, 255),
+          fontWeight: FontWeight.bold,
+        ),
       ),
       body: Center(
         child: FutureBuilder<List<Challenge>>(
