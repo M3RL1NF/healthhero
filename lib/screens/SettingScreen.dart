@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:healthhero/models/setting.dart';
+import '../data/SettingsHelper.dart';
 import 'package:healthhero/screens/DSGVOScreen.dart';
 import 'package:healthhero/screens/AGBScreen.dart';
 
@@ -10,22 +12,65 @@ class SettingScreen extends StatefulWidget {
 }
 
 class SettingScreenState extends State<SettingScreen> {
-  bool _fitnessAndSport = true;
-  bool _nutritionAndHealth = true;
-  final TextEditingController _nameController = TextEditingController(text: 'Arne Kreikebaum');
+
+  bool _fitnessAndSport = false;
+  bool _nutritionAndHealth = false;
+  final TextEditingController _nameController = TextEditingController();
   DateTime _birthday = DateTime.now();
-  String _gender = 'Männlich';
-  bool _agbAccepted = true;
-  bool _dsgvoAccepted = true;
+  String _gender = 'Divers';
+  bool _agbAccepted = false;
+  bool _dsgvoAccepted = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSettings();
+  }
+
+  _loadSettings() async {
+    List<Setting> settings = await SettingHelper.getSettings();
+    if (settings.isNotEmpty) {
+      Setting setting = settings.first;
+      setState(() {
+        _fitnessAndSport = setting.categorySport;
+        _nutritionAndHealth = setting.categoryNutrition;
+        _nameController.text = setting.userName;
+        _birthday = setting.userDateOfBirth;
+        _gender = setting.userGender;
+        _agbAccepted = setting.readAGB;
+        _dsgvoAccepted = setting.readDSGVO;
+      });
+    }
+  }
+
+  _saveSettings() async {
+    Setting setting = Setting(
+      categorySport: _fitnessAndSport,
+      categoryNutrition: _nutritionAndHealth,
+      userName: _nameController.text,
+      userDateOfBirth: _birthday,
+      userGender: _gender,
+      readAGB: _agbAccepted,
+      readDSGVO: _dsgvoAccepted,
+      dailyQuizzes: 0, // Placeholder
+      dailyChallenges: 0, // Placeholder
+    );
+
+    await SettingHelper.updateSetting(setting);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Health Hero'),
+        title: const Text('Einstellungen'),
+        titleTextStyle: const TextStyle(
+          color: Color.fromARGB(255, 255, 255, 255),
+          fontWeight: FontWeight.bold,
+        ),
       ),
       body: ListView(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         children: [
           /// Section 1: Persönliche Daten
           const Padding(
@@ -195,7 +240,7 @@ class SettingScreenState extends State<SettingScreen> {
           // Save Button
           ElevatedButton(
             onPressed: () {
-              // TODO: Save the changes to the database
+              _saveSettings();
             },
             child: const Text('Speichern'),
           ),
@@ -205,11 +250,10 @@ class SettingScreenState extends State<SettingScreen> {
           // Save Button
           ElevatedButton(
             onPressed: () {
-              // TODO: Save the changes to the database
+              // TODO: Reset all the Quizes and the Challenges
             },
             child: const Text('Alle Quizzes und Challenges zurücksetzten'),
           ),
-          
           const SizedBox(height: 5), // Spacer
         ],
       ),
