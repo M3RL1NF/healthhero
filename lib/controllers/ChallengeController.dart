@@ -7,30 +7,33 @@ class ChallengeController {
   static Future<void> generateDailyChallenges(DateTime currentDate) async {
     List<Challenge> existingChallenges = await ChallengeHelper.getChallenges();
     List<Setting> settings = await SettingHelper.getSettings();
-
+    List<Challenge> todayChallenges = existingChallenges
+        .where((challenge) =>
+            challenge.date.year == currentDate.year &&
+            challenge.date.month == currentDate.month &&
+            challenge.date.day == currentDate.day)
+        .toList();
     if (settings.isNotEmpty) {
       Setting setting = settings[0];
-
       int dailyChallenges = setting.dailyChallenges;
       List<Challenge> uniqueChallenges = [];
-
       int maxId = existingChallenges.isNotEmpty
-          ? existingChallenges.map((challenge) => challenge.id).reduce((a, b) => a > b ? a : b)
+          ? existingChallenges
+              .map((challenge) => challenge.id)
+              .reduce((a, b) => a > b ? a : b)
           : 0;
-
       int id = maxId + 1;
-
-      var titles = <String>{};
-
-      for (int i = 0; i < dailyChallenges; i++) {
-        Challenge existingChallenge = existingChallenges[i % existingChallenges.length];
-        String uniqueTitle = '${existingChallenge.title} $i';
-        while (titles.contains(uniqueTitle)) {
-          i++;
-          uniqueTitle = '${existingChallenge.title} $i';
+      var existingTitles = todayChallenges.map((challenge) => challenge.title).toSet();
+      int loopCounter = todayChallenges.length;
+      for (int i = 0; loopCounter < dailyChallenges; i++) {
+        Challenge existingChallenge = existingChallenges[loopCounter % existingChallenges.length];
+        String uniqueTitle = existingChallenge.title;
+        while (existingTitles.contains(uniqueTitle)) {
+          loopCounter++;
+          existingChallenge = existingChallenges[loopCounter % existingChallenges.length];
+          uniqueTitle = existingChallenge.title;
         }
-        titles.add(uniqueTitle);
-
+        existingTitles.add(uniqueTitle);
         Challenge newChallenge = Challenge(
           id: id,
           date: currentDate,
@@ -43,8 +46,8 @@ class ChallengeController {
         );
         uniqueChallenges.add(newChallenge);
         id++;
+        loopCounter++;
       }
-
       for (var challenge in uniqueChallenges) {
         await ChallengeHelper.createChallenge(challenge);
       }

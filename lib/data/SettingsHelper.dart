@@ -8,7 +8,6 @@ class SettingHelper {
   static Future<List<Setting>> getSettings() async {
     final Database db = await DatabaseHelper.database;
     final List<Map<String, dynamic>> maps = await db.query(tableName);
-
     return List.generate(maps.length, (i) {
       return Setting(
         categorySport: maps[i]['categorySport'] == 1,

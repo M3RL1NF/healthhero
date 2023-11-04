@@ -35,32 +35,30 @@ class Challenge {
       'description': description,
       'explanation': explanation,
       'category': category,
-      'progress': progressMapToString(progress), // Convert the map to a string
+      'progress': progressMapToString(progress),
       'userProgress': userProgress,
     };
   }
 
-  // Convert the string representation of progress back to Map<int, String>
   static Map<int, String> stringToProgressMap(String progress) {
     Map<int, String> result = {};
     if (progress.isNotEmpty) {
-      progress = progress.substring(1, progress.length - 1); // Remove curly braces
+      progress = progress.substring(1, progress.length - 1);
       List<String> pairs = progress.split(', ');
-      pairs.forEach((pair) {
+      for (var pair in pairs) {
         List<String> keyValue = pair.split(': ');
         result[int.parse(keyValue[0])] = keyValue[1];
-      });
+      }
     }
     return result;
   }
 
-  // Convert the Map<int, String> progress to a string representation
   static String progressMapToString(Map<int, String> progress) {
     String result = '{';
     progress.forEach((key, value) {
       result += '$key: "$value", ';
     });
-    result = result.substring(0, result.length - 2); // Remove the trailing comma and space
+    result = result.substring(0, result.length - 2);
     result += '}';
     return result;
   }

@@ -9,7 +9,6 @@ class QuizHelper {
   static Future<List<Quiz>> getQuizzes() async {
     final Database db = await DatabaseHelper.database;
     final List<Map<String, dynamic>> maps = await db.query(tableName);
-
     return List.generate(maps.length, (i) {
       return Quiz(
         id: maps[i]['id'],
@@ -33,7 +32,6 @@ class QuizHelper {
             quiz.date.month == currentDate.month &&
             quiz.date.day == currentDate.day)
         .toList();
-
     if (todayQuizzes.isEmpty) {
       await QuizController.generateDailyQuiz(currentDate);
       existingQuiz = await getQuizzes();
@@ -44,7 +42,6 @@ class QuizHelper {
               quiz.date.day == currentDate.day)
           .toList();
     }
-
     return todayQuizzes.isNotEmpty ? todayQuizzes[0] : null;
   }
 

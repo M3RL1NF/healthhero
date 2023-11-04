@@ -9,15 +9,18 @@ class DatabaseHelper {
 
   static Future<Database> get database async {
     if (_database != null) return _database!;
-
     _database = await initDatabase();
     return _database!;
   }
 
   static Future<Database> initDatabase() async {
     final path = await getDatabasesPath();
-    final databasePath = join(path, 'your_database_name.db');
-    return openDatabase(databasePath, version: 1, onCreate: (db, version) async {
+    final databasePath = join(path, 'health_hero_live.db');
+    return openDatabase(databasePath, version: 1,
+        onCreate: (db, version) async {
+      await db.execute('''
+         DROP TABLE IF EXISTS challenges
+        ''');
       await db.execute('''
           CREATE TABLE challenges(
             id INTEGER PRIMARY KEY,
@@ -31,6 +34,9 @@ class DatabaseHelper {
           )
         ''');
       await db.execute('''
+         DROP TABLE IF EXISTS quizzes
+        ''');
+      await db.execute('''
           CREATE TABLE quizzes(
             id INTEGER PRIMARY KEY,
             date TEXT,
@@ -42,6 +48,9 @@ class DatabaseHelper {
             solution INTEGER,
             answer TEXT
           )
+        ''');
+      await db.execute('''
+         DROP TABLE IF EXISTS settings
         ''');
       await db.execute('''
           CREATE TABLE settings(
