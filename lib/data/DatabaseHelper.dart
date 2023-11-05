@@ -6,6 +6,7 @@ import 'package:healthhero/utils/setting_seeds.dart';
 
 class DatabaseHelper {
   static Database? _database;
+  static bool _isDbInitialized = false; // Flag to check if db is initialized
 
   static Future<Database> get database async {
     if (_database != null) return _database!;
@@ -16,56 +17,54 @@ class DatabaseHelper {
   static Future<Database> initDatabase() async {
     final path = await getDatabasesPath();
     final databasePath = join(path, 'health_hero_live.db');
-    return openDatabase(databasePath, version: 1,
-        onCreate: (db, version) async {
+
+    if (!_isDbInitialized) {
+      // Delete the existing database file if it exists and the flag is not set
+      await deleteDatabase(databasePath);
+      _isDbInitialized = true; // Set the flag to true after initialization
+    }
+
+    return openDatabase(databasePath, version: 1, onCreate: (db, version) async {
+      // Create the tables here
       await db.execute('''
-         DROP TABLE IF EXISTS challenges
-        ''');
+        CREATE TABLE challenges(
+          id INTEGER PRIMARY KEY,
+          date TEXT,
+          title TEXT,
+          description TEXT,
+          explanation TEXT,
+          category TEXT,
+          progress TEXT,
+          userProgress INTEGER
+        )
+      ''');
       await db.execute('''
-          CREATE TABLE challenges(
-            id INTEGER PRIMARY KEY,
-            date TEXT,
-            title TEXT,
-            description TEXT,
-            explanation TEXT,
-            category TEXT,
-            progress TEXT,
-            userProgress INTEGER
-          )
-        ''');
+        CREATE TABLE quizzes(
+          id INTEGER PRIMARY KEY,
+          date TEXT,
+          question TEXT,
+          optionA TEXT,
+          optionB TEXT,
+          optionC TEXT,
+          optionD TEXT,
+          solution INTEGER,
+          answer TEXT
+        )
+      ''');
       await db.execute('''
-         DROP TABLE IF EXISTS quizzes
-        ''');
-      await db.execute('''
-          CREATE TABLE quizzes(
-            id INTEGER PRIMARY KEY,
-            date TEXT,
-            question TEXT,
-            optionA TEXT,
-            optionB TEXT,
-            optionC TEXT,
-            optionD TEXT,
-            solution INTEGER,
-            answer TEXT
-          )
-        ''');
-      await db.execute('''
-         DROP TABLE IF EXISTS settings
-        ''');
-      await db.execute('''
-          CREATE TABLE settings(
-            id INTEGER PRIMARY KEY,
-            categorySport INTEGER,
-            categoryNutrition INTEGER,
-            userName TEXT,
-            userDateOfBirth TEXT,
-            userGender TEXT,
-            readAGB INTEGER,
-            readDSGVO INTEGER,
-            dailyQuizzes INTEGER,
-            dailyChallenges INTEGER
-          )
-        ''');
+        CREATE TABLE settings(
+          id INTEGER PRIMARY KEY,
+          categorySport INTEGER,
+          categoryNutrition INTEGER,
+          userName TEXT,
+          userDateOfBirth TEXT,
+          userGender TEXT,
+          readAGB INTEGER,
+          readDSGVO INTEGER,
+          dailyQuizzes INTEGER,
+          dailyChallenges INTEGER
+        )
+      ''');
     });
   }
 
