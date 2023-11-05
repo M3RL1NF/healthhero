@@ -47,7 +47,7 @@ class Challenge {
       List<String> pairs = progress.split(', ');
       for (var pair in pairs) {
         List<String> keyValue = pair.split(': ');
-        result[int.parse(keyValue[0])] = keyValue[1].replaceAll('"', '');
+        result[int.parse(keyValue[0])] = keyValue[1];
       }
     }
     return result;
@@ -56,7 +56,7 @@ class Challenge {
   static String progressMapToString(Map<int, String> progress) {
     String result = '{';
     progress.forEach((key, value) {
-      result += '$key: $value, ';
+      result += '$key: "$value", ';
     });
     result = result.substring(0, result.length - 2);
     result += '}';
