@@ -4,6 +4,7 @@ import 'custom_themes/appBar_theme.dart';
 import 'custom_themes/bottomNavigationBar_themes.dart';
 import 'custom_themes/text_theme.dart';
 import 'custom_themes/button_theme.dart';
+import 'custom_themes/input_theme.dart';
 
 class TAppTheme {
   TAppTheme._();
@@ -19,7 +20,8 @@ class TAppTheme {
     outlinedButtonTheme: TOutlinedButtonTheme.lightTheme,
     textButtonTheme:  TTextButtonTheme.lightTheme,
     iconButtonTheme: TIconButtonTheme.lightTheme,
-
+    inputDecorationTheme: TInputDecorationTheme.lightTheme,
+    textSelectionTheme: TTextSelectionTheme.lightTheme,
   );
 
   static ThemeData darkTheme = ThemeData(
@@ -33,6 +35,8 @@ class TAppTheme {
     outlinedButtonTheme: TOutlinedButtonTheme.darkTheme,
     textButtonTheme:  TTextButtonTheme.darkTheme,
     iconButtonTheme: TIconButtonTheme.darkTheme,
+    inputDecorationTheme: TInputDecorationTheme.darkTheme,
+    textSelectionTheme: TTextSelectionTheme.darkTheme,
   );
 
 }

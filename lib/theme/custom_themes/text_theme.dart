@@ -51,3 +51,23 @@ class TTextTheme {
   );
 
 }
+
+class TTextSelectionTheme {
+  TTextSelectionTheme._();
+
+  static TextSelectionThemeData lightTheme = const TextSelectionThemeData(
+    cursorColor: Colors.black,
+    selectionColor: Colors.blue,
+    selectionHandleColor: Colors.black,
+  );
+
+
+  static TextSelectionThemeData darkTheme = const TextSelectionThemeData(
+    cursorColor: Colors.white,
+    selectionColor: Colors.blue,
+    selectionHandleColor: Colors.white,
+  );
+
+}
+
+
