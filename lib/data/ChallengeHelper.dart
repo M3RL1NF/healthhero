@@ -25,6 +25,23 @@ class ChallengeHelper {
     });
   }
 
+  static Future<List<Challenge>> getUniqueChallenges() async {
+    final Database db = await DatabaseHelper.database;
+    final List<Map<String, dynamic>> maps = await db.query('challenges', distinct: true, groupBy: 'title');
+    return List.generate(maps.length, (i) {
+      return Challenge(
+        id: maps[i]['id'],
+        date: DateTime.parse(maps[i]['date']),
+        title: maps[i]['title'],
+        description: maps[i]['description'],
+        explanation: maps[i]['explanation'],
+        category: maps[i]['category'],
+        progress: Challenge.stringToProgressMap(maps[i]['progress']),
+        userProgress: maps[i]['userProgress'],
+      );
+    });
+  }
+
   static Future<void> increaseUserProgress(int id) async {
     final Database db = await DatabaseHelper.database;
     List<Challenge> challenges = await getChallenges();

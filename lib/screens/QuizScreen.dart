@@ -13,6 +13,7 @@ class QuizScreenState extends State<QuizScreen> {
   int? selectedAnswer;
   bool isCorrect = false;
   bool isIncorrect = false;
+  bool isQuizAnswered = false; // Track if the quiz is answered
   DateTime currentDate = DateTime.now();
 
   Future<Quiz?> _getDailyQuiz(DateTime date) async {
@@ -22,15 +23,28 @@ class QuizScreenState extends State<QuizScreen> {
 
   void _onAnswerSelected(int? answer) {
     setState(() {
-      selectedAnswer = answer;
+      if (selectedAnswer != answer) {
+        selectedAnswer = answer;
+        isCorrect = false;
+        isIncorrect = false;
+      }
+    });
+  }
+
+  void _clearMessages() {
+    setState(() {
+      isCorrect = false;
+      isIncorrect = false;
     });
   }
 
   void _onSubmit(int quizId, int userAnswer, int correctAnswer) {
     if (selectedAnswer != null) {
+      _clearMessages();
       setState(() {
         isCorrect = userAnswer == correctAnswer;
         isIncorrect = userAnswer != correctAnswer;
+        isQuizAnswered = true; // Quiz is answered, disable the button and checkboxes
       });
       QuizHelper.updateQuizAnswer(quizId, userAnswer);
     }
@@ -49,9 +63,9 @@ class QuizScreenState extends State<QuizScreen> {
         setState(() {
           currentDate = picked;
           if (updatedQuiz.answer == null) {
-            isCorrect = false;
-            isIncorrect = false;
+            _clearMessages();
             selectedAnswer = null;
+            isQuizAnswered = false; // Reset the quiz answered status
           }
         });
       }
@@ -81,15 +95,18 @@ class QuizScreenState extends State<QuizScreen> {
                     onPressed: () {
                       setState(() {
                         currentDate = currentDate.subtract(const Duration(days: 1));
-                        isCorrect = false;
-                        isIncorrect = false;
+                        _clearMessages();
                         selectedAnswer = null;
+                        isQuizAnswered = false; 
                       });
                     },
                     icon: const Icon(Icons.arrow_back),
                   ),
                   GestureDetector(
-                    onTap: () => _selectDate(context),
+                    onTap: () {
+                      _clearMessages();
+                      _selectDate(context);
+                    },
                     child: Text(
                       "${currentDate.toLocal()}".split(' ')[0],
                       style: const TextStyle(fontSize: 20),
@@ -99,9 +116,9 @@ class QuizScreenState extends State<QuizScreen> {
                     onPressed: () {
                       setState(() {
                         currentDate = currentDate.add(const Duration(days: 1));
-                        isCorrect = false;
-                        isIncorrect = false;
+                        _clearMessages();
                         selectedAnswer = null;
+                        isQuizAnswered = false; 
                       });
                     },
                     icon: const Icon(Icons.arrow_forward),
@@ -130,32 +147,48 @@ class QuizScreenState extends State<QuizScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               CheckboxListTile(
+                                controlAffinity: ListTileControlAffinity.leading,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
                                 title: Text(quiz.optionA),
                                 value: selectedAnswer == 1,
-                                onChanged: (_) => _onAnswerSelected(1),
+                                onChanged: isQuizAnswered ? null : (_) => _onAnswerSelected(1),
                               ),
                               CheckboxListTile(
+                                controlAffinity: ListTileControlAffinity.leading,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
                                 title: Text(quiz.optionB),
                                 value: selectedAnswer == 2,
-                                onChanged: (_) => _onAnswerSelected(2),
+                                onChanged: isQuizAnswered ? null : (_) => _onAnswerSelected(2),
                               ),
                               CheckboxListTile(
+                                controlAffinity: ListTileControlAffinity.leading,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
                                 title: Text(quiz.optionC),
                                 value: selectedAnswer == 3,
-                                onChanged: (_) => _onAnswerSelected(3),
+                                onChanged: isQuizAnswered ? null : (_) => _onAnswerSelected(3),
                               ),
                               CheckboxListTile(
+                                controlAffinity: ListTileControlAffinity.leading,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
                                 title: Text(quiz.optionD),
                                 value: selectedAnswer == 4,
-                                onChanged: (_) => _onAnswerSelected(4),
+                                onChanged: isQuizAnswered ? null : (_) => _onAnswerSelected(4),
                               ),
                             ],
                           ),
                           const SizedBox(height: 20),
                           ElevatedButton(
-                            onPressed: () {
-                              _onSubmit(quiz.id, selectedAnswer!, quiz.solution);
-                            },
+                            onPressed: isQuizAnswered
+                                ? null
+                                : () => _onSubmit(quiz.id, selectedAnswer!, quiz.solution),
                             child: const Text('Bestätigen'),
                           ),
                           if (isCorrect)

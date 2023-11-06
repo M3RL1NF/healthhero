@@ -47,7 +47,6 @@ class _AchievementScreenState extends State<AchievementScreen> {
           width: MediaQuery.of(context).size.width,
           child: DataTable(
             headingRowHeight: 60,
-            dataRowHeight: 50,
             columnSpacing: 10,
             horizontalMargin: 10,
             sortAscending: _isAscending,
