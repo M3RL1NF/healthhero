@@ -10,44 +10,38 @@ class QuizScreen extends StatefulWidget {
 }
 
 class QuizScreenState extends State<QuizScreen> {
-  int? selectedAnswer;
-  bool isCorrect = false;
-  bool isIncorrect = false;
-  bool isQuizAnswered = false; // Track if the quiz is answered
+  late Future<void> dailyQuizFuture;
+  Quiz? dailyQuiz;
+  int? selectedOption;
   DateTime currentDate = DateTime.now();
+  String? result;
 
-  Future<Quiz?> _getDailyQuiz(DateTime date) async {
-    Quiz? dailyQuiz = await QuizHelper.getDailyQuiz(date);
-    return dailyQuiz;
-  }
-
-  void _onAnswerSelected(int? answer) {
+  Future<void> fetchDailyQuiz() async {
+    final quiz = await QuizHelper.getDailyQuiz(currentDate);
     setState(() {
-      if (selectedAnswer != answer) {
-        selectedAnswer = answer;
-        isCorrect = false;
-        isIncorrect = false;
-      }
+      dailyQuiz = quiz;
+      selectedOption = dailyQuiz?.answer;
+      result = null;
     });
   }
 
-  void _clearMessages() {
-    setState(() {
-      isCorrect = false;
-      isIncorrect = false;
-    });
-  }
-
-  void _onSubmit(int quizId, int userAnswer, int correctAnswer) {
-    if (selectedAnswer != null) {
-      _clearMessages();
+  void updateQuizAnswer(int quizId, int answer) {
+    QuizHelper.updateQuizAnswer(quizId, answer);
+    if (dailyQuiz != null && dailyQuiz!.solution == answer) {
       setState(() {
-        isCorrect = userAnswer == correctAnswer;
-        isIncorrect = userAnswer != correctAnswer;
-        isQuizAnswered = true; // Quiz is answered, disable the button and checkboxes
+        result = 'Sehr gut! Das ist die richtige Antwort!';
       });
-      QuizHelper.updateQuizAnswer(quizId, userAnswer);
+    } else {
+      setState(() {
+        result = 'Opps! Das ist leider nicht die richtige Antwort!';
+      });
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    dailyQuizFuture = fetchDailyQuiz();
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -58,192 +52,150 @@ class QuizScreenState extends State<QuizScreen> {
       lastDate: DateTime(2101),
     );
     if (picked != null && picked != currentDate) {
-      final Quiz? updatedQuiz = await _getDailyQuiz(picked);
-      if (updatedQuiz != null) {
-        setState(() {
-          currentDate = picked;
-          if (updatedQuiz.answer == null) {
-            _clearMessages();
-            selectedAnswer = null;
-            isQuizAnswered = false; // Reset the quiz answered status
-          }
-        });
-      }
+      setState(() {
+        currentDate = picked;
+        fetchDailyQuiz();
+      });
     }
+  }
+
+  Widget _buildDateSlider() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        IconButton(
+          onPressed: () {
+            setState(() {
+              currentDate = currentDate.subtract(const Duration(days: 1));
+              fetchDailyQuiz();
+            });
+          },
+          icon: const Icon(Icons.arrow_back),
+        ),
+        GestureDetector(
+          onTap: () {
+            _selectDate(context);
+          },
+          child: Text(
+            "${currentDate.toLocal()}".split(' ')[0],
+            style: const TextStyle(fontSize: 20),
+          ),
+        ),
+        IconButton(
+          onPressed: () {
+            setState(() {
+              currentDate = currentDate.add(const Duration(days: 1));
+              fetchDailyQuiz();
+            });
+          },
+          icon: const Icon(Icons.arrow_forward),
+        ),
+      ],
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tägliches Quiz'),
-        titleTextStyle: const TextStyle(
-          color: Color.fromARGB(255, 255, 255, 255),
-          fontWeight: FontWeight.bold,
-        ),
+        title: const Text('Daily Quiz'),
       ),
-      body: Align(
-        alignment: Alignment.topCenter,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      setState(() {
-                        currentDate = currentDate.subtract(const Duration(days: 1));
-                        _clearMessages();
-                        selectedAnswer = null;
-                        isQuizAnswered = false; 
-                      });
-                    },
-                    icon: const Icon(Icons.arrow_back),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      _clearMessages();
-                      _selectDate(context);
-                    },
-                    child: Text(
-                      "${currentDate.toLocal()}".split(' ')[0],
-                      style: const TextStyle(fontSize: 20),
+      body: FutureBuilder<void>(
+        future: dailyQuizFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else {
+            if (dailyQuiz == null) {
+              return const Center(child: Text('No quiz available for today.'));
+            } else {
+              return Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0, vertical: 24.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildDateSlider(),
+                    Text(
+                      dailyQuiz!.question,
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
                     ),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      setState(() {
-                        currentDate = currentDate.add(const Duration(days: 1));
-                        _clearMessages();
-                        selectedAnswer = null;
-                        isQuizAnswered = false; 
-                      });
-                    },
-                    icon: const Icon(Icons.arrow_forward),
-                  ),
-                ],
-              ),
-              FutureBuilder<Quiz?>(
-                future: _getDailyQuiz(currentDate),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const CircularProgressIndicator();
-                  } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  } else if (snapshot.hasData) {
-                    Quiz? quiz = snapshot.data;
-                    if (quiz != null) {
-                      return Column(
+                    const SizedBox(height: 20),
+                    CheckboxListTile(
+                      title: Text(dailyQuiz!.optionA),
+                      value: selectedOption == 1,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          selectedOption = value! ? 1 : null;
+                        });
+                      },
+                    ),
+                    CheckboxListTile(
+                      title: Text(dailyQuiz!.optionB),
+                      value: selectedOption == 2,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          selectedOption = value! ? 2 : null;
+                        });
+                      },
+                    ),
+                    CheckboxListTile(
+                      title: Text(dailyQuiz!.optionC),
+                      value: selectedOption == 3,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          selectedOption = value! ? 3 : null;
+                        });
+                      },
+                    ),
+                    CheckboxListTile(
+                      title: Text(dailyQuiz!.optionD),
+                      value: selectedOption == 4,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          selectedOption = value! ? 4 : null;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () {
+                        if (selectedOption != null) {
+                          updateQuizAnswer(dailyQuiz!.id, selectedOption!);
+                        }
+                      },
+                      child: const Text('Bestätigen'),
+                    ),
+                    if (result != null)
+                      Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            quiz.question,
-                            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                          ),
                           const SizedBox(height: 20),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              CheckboxListTile(
-                                controlAffinity: ListTileControlAffinity.leading,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                title: Text(quiz.optionA),
-                                value: selectedAnswer == 1,
-                                onChanged: isQuizAnswered ? null : (_) => _onAnswerSelected(1),
-                              ),
-                              CheckboxListTile(
-                                controlAffinity: ListTileControlAffinity.leading,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                title: Text(quiz.optionB),
-                                value: selectedAnswer == 2,
-                                onChanged: isQuizAnswered ? null : (_) => _onAnswerSelected(2),
-                              ),
-                              CheckboxListTile(
-                                controlAffinity: ListTileControlAffinity.leading,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                title: Text(quiz.optionC),
-                                value: selectedAnswer == 3,
-                                onChanged: isQuizAnswered ? null : (_) => _onAnswerSelected(3),
-                              ),
-                              CheckboxListTile(
-                                controlAffinity: ListTileControlAffinity.leading,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                title: Text(quiz.optionD),
-                                value: selectedAnswer == 4,
-                                onChanged: isQuizAnswered ? null : (_) => _onAnswerSelected(4),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 20),
-                          ElevatedButton(
-                            onPressed: isQuizAnswered
-                                ? null
-                                : () => _onSubmit(quiz.id, selectedAnswer!, quiz.solution),
-                            child: const Text('Bestätigen'),
-                          ),
-                          if (isCorrect)
-                            Padding(
-                              padding: const EdgeInsets.only(top: 10),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: const Color.fromARGB(255, 164, 255, 167),
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: const SizedBox(
-                                  width: double.infinity,
-                                  child: Padding(
-                                    padding: EdgeInsets.all(10.0),
-                                    child: Text(
-                                      'Sehr gut! Das ist die richtige Antwort.',
-                                      style: TextStyle(color: Colors.black),
-                                    ),
-                                  ),
-                                ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 10.0),
+                            child: Text(
+                              result!,
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: result ==
+                                        'Sehr gut! Das ist die richtige Antwort!'
+                                    ? Colors.green
+                                    : const Color.fromARGB(255, 255, 42, 27),
                               ),
                             ),
-                          if (isIncorrect)
-                            Padding(
-                              padding: const EdgeInsets.only(top: 10),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: const Color.fromARGB(255, 255, 152, 145),
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: const SizedBox(
-                                  width: double.infinity,
-                                  child: Padding(
-                                    padding: EdgeInsets.all(10.0),
-                                    child: Text(
-                                      'Oops! Das ist leider die falsche Antwort.',
-                                      style: TextStyle(color: Colors.black),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
+                          ),
                         ],
-                      );
-                    } else {
-                      return const Text('No quiz found for today.');
-                    }
-                  } else {
-                    return const Text('No data found');
-                  }
-                },
-              ),
-            ],
-          ),
-        ),
+                      ),
+                  ],
+                ),
+              );
+            }
+          }
+        },
       ),
     );
   }
