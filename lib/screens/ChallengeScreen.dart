@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:healthhero/data/ChallengeHelper.dart';
 import '../models/challenge.dart';
+import '../theme/custom_themes/color_theme.dart';
 
 class ChallengeScreen extends StatefulWidget {
   const ChallengeScreen({Key? key}) : super(key: key);
@@ -12,6 +13,22 @@ class ChallengeScreen extends StatefulWidget {
 class _ChallengeScreenState extends State<ChallengeScreen> {
   late Future<List<Challenge>> _dailyChallenges;
   DateTime currentDate = DateTime.now();
+
+  // Create a list of month names
+  final List<String> monthNames = [
+    'Januar',
+    'Februar',
+    'März',
+    'April',
+    'Mai',
+    'Juni',
+    'Juli',
+    'August',
+    'September',
+    'Oktober',
+    'November',
+    'Dezember'
+  ];
 
   @override
   void initState() {
@@ -54,10 +71,11 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                     ? MainAxisAlignment.spaceBetween
                     : MainAxisAlignment.spaceBetween,
                 children: [
-                  if (progress.length == 1) const Text(
-                    '0',
-                    style: TextStyle(fontSize: 12, color: Colors.grey),
-                  ),
+                  if (progress.length == 1)
+                    const Text(
+                      '0',
+                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
                   ...progress.entries.map((entry) {
                     return Text(
                       entry.value,
@@ -74,6 +92,9 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
   }
 
   Widget _buildDateSlider() {
+    // Use the monthNames list to convert the month number to a string
+    String monthName = monthNames[currentDate.month - 1];
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -85,13 +106,15 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
             });
           },
           icon: const Icon(Icons.arrow_back),
+          color: lightPrimaryColor400,
         ),
         GestureDetector(
           onTap: () {
             _selectDate(context);
           },
           child: Text(
-            "${currentDate.toLocal()}".split(' ')[0],
+            // Update the display to use the month name
+            "${currentDate.day}. $monthName ${currentDate.year}",
             style: const TextStyle(fontSize: 20),
           ),
         ),
@@ -103,6 +126,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
             });
           },
           icon: const Icon(Icons.arrow_forward),
+          color: lightPrimaryColor400,
         ),
       ],
     );
@@ -140,15 +164,10 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Tägliche Challenges'),
-        titleTextStyle: const TextStyle(
-          color: Color.fromARGB(255, 255, 255, 255),
-          fontWeight: FontWeight.bold,
-        ),
-      ),
+      appBar: AppBar(title: const Text('Tägliche Challenges')),
       body: Column(
         children: [
+          const SizedBox(height: 40),
           _buildDateSlider(),
           Expanded(
             child: Center(
@@ -166,22 +185,26 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                       itemBuilder: (context, index) {
                         Challenge challenge = challenges[index];
                         return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8.0, vertical: 0),
                           child: Card(
-                            elevation: 4,
+                            elevation: 0,
                             shape: RoundedRectangleBorder(
                               side: BorderSide(
-                                color: challenge.userProgress == challenge.progress.length
-                                    ? Theme.of(context).primaryColor
+                                color: challenge.userProgress ==
+                                        challenge.progress.length
+                                    ? lightPrimaryColor400
                                     : Colors.grey,
                                 width: 2.0,
                               ),
                               borderRadius: BorderRadius.circular(8.0),
                             ),
                             child: ListTile(
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 16.0, vertical: 8.0),
                               title: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   _buildChallengeTitle(challenge.title),
                                   _getCategoryIconWidget(challenge.category),
@@ -192,30 +215,37 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                                 children: [
                                   const SizedBox(height: 15),
                                   LinearProgressIndicator(
-                                    value: challenge.userProgress / challenge.progress.length,
+                                    value: challenge.userProgress /
+                                        challenge.progress.length,
+                                        color: lightPrimaryColor400,
                                     minHeight: 10,
                                   ),
                                   _getStepValues(challenge.progress),
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
-                                      const SizedBox(width: 0),
                                       IconButton(
                                         onPressed: () async {
-                                          await ChallengeHelper.decreaseUserProgress(challenge.id);
+                                          await ChallengeHelper
+                                              .decreaseUserProgress(
+                                                  challenge.id);
                                           _refreshChallenges();
                                         },
                                         icon: const Icon(Icons.remove),
+                                        color: lightPrimaryColor400,
                                       ),
                                       const Spacer(),
                                       IconButton(
                                         onPressed: () async {
-                                          await ChallengeHelper.increaseUserProgress(challenge.id);
+                                          await ChallengeHelper
+                                              .increaseUserProgress(
+                                                  challenge.id);
                                           _refreshChallenges();
                                         },
                                         icon: const Icon(Icons.add),
+                                        color: lightPrimaryColor400,
                                       ),
-                                      const SizedBox(width: 0),
                                     ],
                                   ),
                                 ],
