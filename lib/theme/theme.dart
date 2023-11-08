@@ -15,6 +15,7 @@ class TAppTheme {
   static ThemeData lightTheme = ThemeData(
     useMaterial3: true,
     brightness: Brightness.light,
+    primaryColor: const Color(0xFF21F3BF),
     scaffoldBackgroundColor: lightScaffoldColor,
     appBarTheme: TAppBarTheme.lightTheme,
     bottomNavigationBarTheme: TBottomNavigationBarTheme.lightTheme,
@@ -32,9 +33,9 @@ class TAppTheme {
   static ThemeData darkTheme = ThemeData(
     useMaterial3: true,
     brightness: Brightness.dark,
+    primaryColor: const Color(0xFF21F3BF),
     textTheme: TTextTheme.darkTheme,
     scaffoldBackgroundColor: Colors.black,
-    primaryColor: Colors.blue,
     appBarTheme: TAppBarTheme.darkTheme,
     bottomNavigationBarTheme: TBottomNavigationBarTheme.darkTheme,
     elevatedButtonTheme: TElevatedButtonTheme.darkTheme,
