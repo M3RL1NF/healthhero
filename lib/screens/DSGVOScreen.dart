@@ -1,5 +1,20 @@
 import 'package:flutter/material.dart';
 
+final List<String> monthNames = [
+  'Januar',
+  'Februar',
+  'März',
+  'April',
+  'Mai',
+  'Juni',
+  'Juli',
+  'August',
+  'September',
+  'Oktober',
+  'November',
+  'Dezember'
+];
+
 class DSGVOScreen extends StatelessWidget {
   const DSGVOScreen({super.key});
 

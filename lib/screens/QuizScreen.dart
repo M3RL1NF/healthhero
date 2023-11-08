@@ -1,9 +1,6 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:healthhero/data/QuizHelper.dart';
 import 'package:healthhero/theme/custom_themes/color_theme.dart';
-import 'package:path/path.dart';
 import '../models/quiz.dart';
 
   // List of month names
@@ -139,12 +136,12 @@ List<Widget> _buildOptionList(Quiz dailyQuiz, Function(int) onOptionSelected) {
           }
 
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
             child: 
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 30),
+                const SizedBox(height: 40),
                 _buildDateSlider(
                   monthNames[currentDate.month - 1],
                   () => setState(() {
