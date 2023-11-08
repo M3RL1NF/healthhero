@@ -34,7 +34,6 @@ class _LearnScreenState extends State<LearnScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: lightPrimaryColor400,
       appBar: AppBar(
         title: const Text('Lernzentrum'),
         actions: [
@@ -84,28 +83,29 @@ class _LearnScreenState extends State<LearnScreen> {
               itemBuilder: (context, index) {
                 final challenge = challenges[index];
                 if (challenge.category == selectedCategory) {
-                  return Card(
-                    child: Padding(
-                      padding:
-                          const EdgeInsets.all(12.0), // Padding inside the card
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment
-                            .start, // Align text to the start of the cardS
-                        children: [
-                          Text(
-                            challenge.title,
-                            style: Theme.of(context).textTheme.headlineMedium,
-                          ),
-                          const SizedBox(
-                              height:
-                                  8.0), // Space between title and description
-                          Text(
-                            challenge.description,
-                            textAlign: TextAlign.justify,
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                        ],
-                      ),
+                  return Padding(
+                    padding:
+                        const EdgeInsets.all(12.0), // Padding inside the card
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment
+                          .start, // Align text to the start of the cardS
+                      children: [
+                        const Divider(
+                          color: lightPrimaryColor500,
+                        ),
+                        const SizedBox(height: 22.0),
+                        Text(
+                          challenge.title,
+                          style: Theme.of(context).textTheme.headlineMedium,
+                        ),
+                        const SizedBox(
+                            height: 8.0), // Space between title and description
+                        Text(
+                          challenge.description,
+                          textAlign: TextAlign.justify,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      ],
                     ),
                   );
                 } else {

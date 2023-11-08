@@ -15,7 +15,7 @@ class TCardTheme {
 
   static const darkTheme = CardTheme(
     elevation: 0,
-    margin: EdgeInsets.all(0),
-    color: Colors.green,
+    margin: EdgeInsets.all(10),
+    color: Colors.black,
   );
 }
