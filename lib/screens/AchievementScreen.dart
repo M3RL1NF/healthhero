@@ -205,10 +205,6 @@ class _AchievementScreenState extends State<AchievementScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Errungenschaften'),
-        titleTextStyle: const TextStyle(
-          color: Color.fromARGB(255, 255, 255, 255),
-          fontWeight: FontWeight.bold,
-        ),
       ),
       body: SingleChildScrollView(
         child: Column(

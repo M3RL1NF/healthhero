@@ -201,7 +201,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                             ),
                             child: ListTile(
                               contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 16.0, vertical: 8.0),
+                                  horizontal: 16.0, vertical: 10.0),
                               title: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
