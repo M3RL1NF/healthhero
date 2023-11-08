@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'color_theme.dart';
 
 const EdgeInsets buttonPadding = EdgeInsets.symmetric(vertical: 10, horizontal: 18);
 
@@ -11,9 +12,10 @@ class TElevatedButtonTheme {
       padding: buttonPadding,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       foregroundColor: Colors.white,
-      backgroundColor: Colors.blue,
+      backgroundColor: lightPrimaryColor600,
       disabledForegroundColor: Colors.white,
       disabledBackgroundColor: Colors.grey,
+      textStyle: const TextStyle(fontWeight: FontWeight.w600) 
     )
   );
 
@@ -22,10 +24,11 @@ class TElevatedButtonTheme {
         elevation: 0,
         padding: buttonPadding,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        foregroundColor: Colors.white,
-        backgroundColor: Colors.blue,
-        disabledForegroundColor: Colors.black,
-        disabledBackgroundColor: Colors.grey,
+      foregroundColor: Colors.white,
+      backgroundColor: lightPrimaryColor600,
+      disabledForegroundColor: Colors.white,
+      disabledBackgroundColor: Colors.grey,
+      textStyle: const TextStyle(fontWeight: FontWeight.w600) 
       )
     );
 

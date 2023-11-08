@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:healthhero/theme/custom_themes/color_theme.dart';
 
 const EdgeInsets buttonPadding =
     EdgeInsets.symmetric(vertical: 10, horizontal: 18);
