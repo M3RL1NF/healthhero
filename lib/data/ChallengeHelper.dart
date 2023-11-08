@@ -27,7 +27,8 @@ class ChallengeHelper {
 
   static Future<List<Challenge>> getUniqueChallenges() async {
     final Database db = await DatabaseHelper.database;
-    final List<Map<String, dynamic>> maps = await db.query('challenges', distinct: true, groupBy: 'title');
+    final List<Map<String, dynamic>> maps =
+        await db.query('challenges', distinct: true, groupBy: 'title');
     return List.generate(maps.length, (i) {
       return Challenge(
         id: maps[i]['id'],
@@ -45,7 +46,8 @@ class ChallengeHelper {
   static Future<void> increaseUserProgress(int id) async {
     final Database db = await DatabaseHelper.database;
     List<Challenge> challenges = await getChallenges();
-    Challenge currentChallenge = challenges.firstWhere((challenge) => challenge.id == id);
+    Challenge currentChallenge =
+        challenges.firstWhere((challenge) => challenge.id == id);
     if (currentChallenge.userProgress < currentChallenge.progress.length) {
       await db.rawUpdate('''
         UPDATE challenges 
@@ -58,7 +60,8 @@ class ChallengeHelper {
   static Future<void> decreaseUserProgress(int id) async {
     final Database db = await DatabaseHelper.database;
     List<Challenge> challenges = await getChallenges();
-    Challenge currentChallenge = challenges.firstWhere((challenge) => challenge.id == id);
+    Challenge currentChallenge =
+        challenges.firstWhere((challenge) => challenge.id == id);
     if (currentChallenge.userProgress > 0) {
       await db.rawUpdate('''
         UPDATE challenges 
@@ -68,7 +71,8 @@ class ChallengeHelper {
     }
   }
 
-  static Future<List<Challenge>> getDailyChallenges(DateTime currentDate) async {
+  static Future<List<Challenge>> getDailyChallenges(
+      DateTime currentDate) async {
     List<Challenge> existingChallenges = await getChallenges();
     List<Setting> settings = await SettingHelper.getSettings();
     Setting setting = settings[0];
@@ -79,7 +83,7 @@ class ChallengeHelper {
             challenge.date.month == currentDate.month &&
             challenge.date.day == currentDate.day)
         .toList();
-    if (todayChallenges.length < dailyChallenges) {
+    while (todayChallenges.length < dailyChallenges) {
       await ChallengeController.generateDailyChallenges(currentDate);
       existingChallenges = await getChallenges();
       todayChallenges = existingChallenges

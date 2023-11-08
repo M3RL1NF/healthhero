@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:healthhero/data/ChallengeHelper.dart';
 import 'package:healthhero/data/SettingsHelper.dart';
 import 'package:healthhero/models/setting.dart';
@@ -17,26 +18,42 @@ class ChallengeController {
       Setting setting = settings[0];
       int dailyChallenges = setting.dailyChallenges;
       List<Challenge> uniqueChallenges = [];
+      var existingTitles =
+          todayChallenges.map((challenge) => challenge.title).toSet();
+      Set<String> existingDates =
+          todayChallenges.map((challenge) => challenge.date.toString()).toSet();
       int maxId = existingChallenges.isNotEmpty
           ? existingChallenges
               .map((challenge) => challenge.id)
               .reduce((a, b) => a > b ? a : b)
           : 0;
       int id = maxId + 1;
-      var existingTitles = todayChallenges.map((challenge) => challenge.title).toSet();
       int loopCounter = todayChallenges.length;
+      var random = Random();
       for (int i = 0; loopCounter < dailyChallenges; i++) {
-        Challenge existingChallenge = existingChallenges[loopCounter % existingChallenges.length];
+        int randomIndex = random.nextInt(existingChallenges.length);
+        Challenge existingChallenge = existingChallenges[randomIndex];
         String uniqueTitle = existingChallenge.title;
+        String uniqueDate = currentDate.toString();
+        int attemptCounter = 0;
         while (existingTitles.contains(uniqueTitle)) {
           loopCounter++;
-          existingChallenge = existingChallenges[loopCounter % existingChallenges.length];
+          randomIndex = random.nextInt(existingChallenges.length);
+          existingChallenge = existingChallenges[randomIndex];
           uniqueTitle = existingChallenge.title;
+          if (currentDate.isBefore(DateTime.now())) {
+            uniqueDate =
+                currentDate.subtract(Duration(days: attemptCounter)).toString();
+          } else {
+            uniqueDate = currentDate.toString();
+          }
+          attemptCounter++;
         }
         existingTitles.add(uniqueTitle);
+        existingDates.add(uniqueDate);
         Challenge newChallenge = Challenge(
           id: id,
-          date: currentDate,
+          date: DateTime.parse(uniqueDate),
           title: uniqueTitle,
           description: existingChallenge.description,
           explanation: existingChallenge.explanation,
