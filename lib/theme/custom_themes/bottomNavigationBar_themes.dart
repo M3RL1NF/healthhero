@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:healthhero/theme/custom_themes/color_theme.dart';
 
 class TBottomNavigationBarTheme {
   TBottomNavigationBarTheme._();
@@ -7,7 +8,7 @@ class TBottomNavigationBarTheme {
     elevation: 0,
     backgroundColor: Colors.white,
     type: BottomNavigationBarType.fixed,
-    selectedItemColor: Colors.black,
+    selectedItemColor: lightPrimaryColor800,
     unselectedItemColor: Colors.grey,
     selectedIconTheme: IconThemeData(),
     unselectedIconTheme: IconThemeData(),

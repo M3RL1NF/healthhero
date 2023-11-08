@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:healthhero/data/ChallengeHelper.dart';
 import 'package:healthhero/models/challenge.dart';
-
+import '../theme/custom_themes/color_theme.dart';
 
 class LearnScreen extends StatefulWidget {
   const LearnScreen({Key? key}) : super(key: key);
@@ -17,7 +17,7 @@ class _LearnScreenState extends State<LearnScreen> {
     'Sport': 'Sport',
     'Nutrition': 'Ernährung',
   };
-  
+
   @override
   void initState() {
     super.initState();
@@ -34,6 +34,7 @@ class _LearnScreenState extends State<LearnScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: lightPrimaryColor400,
       appBar: AppBar(
         title: const Text('Lernzentrum'),
         actions: [
@@ -42,7 +43,7 @@ class _LearnScreenState extends State<LearnScreen> {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                color: Theme.of(context).primaryColor,
+                color: lightAppBarTextColor,
               ),
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(8, 8, 4, 8),
@@ -63,10 +64,12 @@ class _LearnScreenState extends State<LearnScreen> {
                     });
                   },
                   underline: Container(),
-                  icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
-                  dropdownColor: Theme.of(context).primaryColor,
+                  icon: const Icon(Icons.arrow_drop_down,
+                      color: lightPrimaryColor400),
+                  dropdownColor: lightAppBarTextColor,
                   style: const TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold),
+                      color: lightPrimaryTextColor,
+                      fontWeight: FontWeight.bold),
                 ),
               ),
             ),
@@ -82,8 +85,6 @@ class _LearnScreenState extends State<LearnScreen> {
                 final challenge = challenges[index];
                 if (challenge.category == selectedCategory) {
                   return Card(
-                    color: Colors.black,
-                    elevation: 0,
                     child: Padding(
                       padding:
                           const EdgeInsets.all(12.0), // Padding inside the card
@@ -93,7 +94,7 @@ class _LearnScreenState extends State<LearnScreen> {
                         children: [
                           Text(
                             challenge.title,
-                            style: Theme.of(context).textTheme.headlineSmall,
+                            style: Theme.of(context).textTheme.headlineMedium,
                           ),
                           const SizedBox(
                               height:

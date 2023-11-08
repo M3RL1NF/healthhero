@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'custom_themes/color_theme.dart';
 
 import 'custom_themes/appBar_theme.dart';
 import 'custom_themes/bottomNavigationBar_themes.dart';
@@ -6,6 +7,7 @@ import 'custom_themes/text_theme.dart';
 import 'custom_themes/button_theme.dart';
 import 'custom_themes/input_theme.dart';
 import 'custom_themes/selection_theme.dart';
+import 'custom_themes/card_theme.dart';
 
 class TAppTheme {
   TAppTheme._();
@@ -13,8 +15,7 @@ class TAppTheme {
   static ThemeData lightTheme = ThemeData(
     useMaterial3: true,
     brightness: Brightness.light,
-    scaffoldBackgroundColor: Colors.white,
-    primaryColor: Colors.green,
+    scaffoldBackgroundColor: lightScaffoldColor,
     appBarTheme: TAppBarTheme.lightTheme,
     bottomNavigationBarTheme: TBottomNavigationBarTheme.lightTheme,
     textTheme: TTextTheme.lightTheme,
@@ -25,6 +26,7 @@ class TAppTheme {
     inputDecorationTheme: TInputDecorationTheme.lightTheme,
     textSelectionTheme: TTextSelectionTheme.lightTheme,
     checkboxTheme: TCheckboxTheme.lightTheme,
+    cardTheme: TCardTheme.lightTheme,
   );
 
   static ThemeData darkTheme = ThemeData(
@@ -42,6 +44,7 @@ class TAppTheme {
     inputDecorationTheme: TInputDecorationTheme.darkTheme,
     textSelectionTheme: TTextSelectionTheme.darkTheme,
     checkboxTheme: TCheckboxTheme.darkTheme,
+    cardTheme: TCardTheme.darkTheme,
   );
 
 }
