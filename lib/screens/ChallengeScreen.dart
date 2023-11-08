@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import '../data/ChallengeHelper.dart';
+import 'package:healthhero/data/ChallengeHelper.dart';
 import '../models/challenge.dart';
 
 class ChallengeScreen extends StatefulWidget {
   const ChallengeScreen({Key? key}) : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
   _ChallengeScreenState createState() => _ChallengeScreenState();
 }
 
@@ -51,13 +50,21 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: progress.entries.map((entry) {
-                  return Text(
-                    entry.value,
-                    style: const TextStyle(fontSize: 12, color: Colors.grey),
-                  );
-                }).toList(),
+                mainAxisAlignment: progress.length == 1
+                    ? MainAxisAlignment.spaceBetween
+                    : MainAxisAlignment.spaceBetween,
+                children: [
+                  if (progress.length == 1) const Text(
+                    '0',
+                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
+                  ...progress.entries.map((entry) {
+                    return Text(
+                      entry.value,
+                      style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    );
+                  }).toList(),
+                ],
               ),
             ),
           ),
@@ -159,14 +166,12 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                       itemBuilder: (context, index) {
                         Challenge challenge = challenges[index];
                         return Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16.0, vertical: 8.0),
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                           child: Card(
                             elevation: 4,
                             shape: RoundedRectangleBorder(
                               side: BorderSide(
-                                color: challenge.userProgress ==
-                                        challenge.progress.length
+                                color: challenge.userProgress == challenge.progress.length
                                     ? Theme.of(context).primaryColor
                                     : Colors.grey,
                                 width: 2.0,
@@ -174,11 +179,9 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                               borderRadius: BorderRadius.circular(8.0),
                             ),
                             child: ListTile(
-                              contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 16.0, vertical: 8.0),
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                               title: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   _buildChallengeTitle(challenge.title),
                                   _getCategoryIconWidget(challenge.category),
@@ -189,21 +192,17 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                                 children: [
                                   const SizedBox(height: 15),
                                   LinearProgressIndicator(
-                                    value: challenge.userProgress /
-                                        challenge.progress.length,
+                                    value: challenge.userProgress / challenge.progress.length,
                                     minHeight: 10,
                                   ),
                                   _getStepValues(challenge.progress),
                                   Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
                                       const SizedBox(width: 0),
                                       IconButton(
                                         onPressed: () async {
-                                          await ChallengeHelper
-                                              .decreaseUserProgress(
-                                                  challenge.id);
+                                          await ChallengeHelper.decreaseUserProgress(challenge.id);
                                           _refreshChallenges();
                                         },
                                         icon: const Icon(Icons.remove),
@@ -211,9 +210,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                                       const Spacer(),
                                       IconButton(
                                         onPressed: () async {
-                                          await ChallengeHelper
-                                              .increaseUserProgress(
-                                                  challenge.id);
+                                          await ChallengeHelper.increaseUserProgress(challenge.id);
                                           _refreshChallenges();
                                         },
                                         icon: const Icon(Icons.add),
