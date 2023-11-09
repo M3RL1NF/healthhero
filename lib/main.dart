@@ -37,7 +37,7 @@ class MyBottomNavigationBar extends StatefulWidget {
 }
 
 class MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
-  int _currentIndex = 0;
+  int _currentIndex = 2;
   final List<Widget> _children = [
     const LearnScreen(key: Key('learn')),
     const QuizScreen(key: Key('quiz')),
