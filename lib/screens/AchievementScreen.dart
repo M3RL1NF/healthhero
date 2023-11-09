@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:healthhero/models/challenge.dart';
 import '../data/ChallengeHelper.dart';
 import 'package:pie_chart/pie_chart.dart';
-import '../theme/custom_themes/color_theme.dart';
 
 class AchievementScreen extends StatefulWidget {
   const AchievementScreen({Key? key}) : super(key: key);
