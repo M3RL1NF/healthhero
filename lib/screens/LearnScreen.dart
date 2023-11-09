@@ -90,10 +90,6 @@ class _LearnScreenState extends State<LearnScreen> {
                       crossAxisAlignment: CrossAxisAlignment
                           .start, // Align text to the start of the cardS
                       children: [
-                        const Divider(
-                          color: lightPrimaryColor500,
-                        ),
-                        const SizedBox(height: 22.0),
                         Text(
                           challenge.title,
                           style: Theme.of(context).textTheme.headlineMedium,
@@ -104,6 +100,10 @@ class _LearnScreenState extends State<LearnScreen> {
                           challenge.description,
                           textAlign: TextAlign.justify,
                           style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                        const SizedBox(height: 22.0),
+                        const Divider(
+                          color: lightPrimaryColor500,
                         ),
                       ],
                     ),
