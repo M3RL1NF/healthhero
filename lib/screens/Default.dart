@@ -14,6 +14,7 @@ class AchievementScreen extends StatefulWidget {
 
 class _AchievementScreenState extends State<AchievementScreen> {
   late Future<List<Challenge>> _challengesFuture;
+  bool _isTableVisible = true;
   int _sortColumnIndex = 0;
   bool _isAscending = true;
 
@@ -42,66 +43,77 @@ class _AchievementScreenState extends State<AchievementScreen> {
 
   Widget _buildTable(List<Challenge> challenges) {
     return SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width,
-        child: DataTable(
-          headingRowHeight: 60,
-          columnSpacing: 10,
-          horizontalMargin: 10,
-          dataRowMaxHeight: 85,
-          sortAscending: _isAscending,
-          sortColumnIndex: _sortColumnIndex,
-          columns: <DataColumn>[
-            DataColumn(
-              label: const Expanded(
-                flex: 2,
-                child: Text('Challenge'),
+      scrollDirection: Axis.horizontal,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width,
+          child: DataTable(
+            headingRowHeight: 60,
+            columnSpacing: 10,
+            horizontalMargin: 10,
+            sortAscending: _isAscending,
+            sortColumnIndex: _sortColumnIndex,
+            columns: <DataColumn>[
+              DataColumn(
+                label: const Expanded(
+                  flex: 2,
+                  child: Text('Title'),
+                ),
+                onSort: (columnIndex, _) {
+                  _sort((Challenge challenge) => challenge.title, columnIndex,
+                      !_isAscending);
+                },
               ),
-              onSort: (columnIndex, _) {
-                _sort((Challenge challenge) => challenge.title, columnIndex,
-                    !_isAscending);
+              DataColumn(
+                label: const Expanded(
+                  child: Text('Category'),
+                ),
+                onSort: (columnIndex, _) {
+                  _sort((Challenge challenge) => challenge.category,
+                      columnIndex, !_isAscending);
+                },
+              ),
+              DataColumn(
+                label: const Expanded(
+                  flex: 1,
+                  child: Text('Fortschritt'),
+                ),
+                onSort: (columnIndex, _) {
+                  _sort((Challenge challenge) => challenge.userProgress,
+                      columnIndex, !_isAscending);
+                },
+              ),
+            ],
+            rows: List<DataRow>.generate(
+              challenges.length,
+              (index) {
+                final Challenge challenge = challenges[index];
+                return DataRow(
+                  cells: [
+                    DataCell(
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Text(challenge.title),
+                      ),
+                    ),
+                    DataCell(
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Text(challenge.category),
+                      ),
+                    ),
+                    DataCell(
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Text(
+                            '${challenge.userProgress}/${challenge.progress.length}'),
+                      ),
+                    ),
+                  ],
+                );
               },
             ),
-            DataColumn(
-              label: const Expanded(
-                child: Text('Kategorie'),
-              ),
-              onSort: (columnIndex, _) {
-                _sort((Challenge challenge) => challenge.category,
-                    columnIndex, !_isAscending);
-              },
-            ),
-            DataColumn(
-              label: const Expanded(
-                flex: 1,
-                child: Text('Fortschritt'),
-              ),
-              onSort: (columnIndex, _) {
-                _sort((Challenge challenge) => challenge.userProgress,
-                    columnIndex, !_isAscending);
-              },
-            ),
-          ],
-          rows: List<DataRow>.generate(
-            challenges.length,
-            (index) {
-              final Challenge challenge = challenges[index];
-              return DataRow(
-                cells: [
-                  DataCell(
-                    Text(challenge.title),
-                  ),
-                  DataCell(
-                    Text(challenge.category),
-                  ),
-                  DataCell(
-                    Text(
-                        '${challenge.userProgress}/${challenge.progress.length}'),
-                  ),
-                ],
-              );
-            },
           ),
         ),
       ),
@@ -148,17 +160,45 @@ class _AchievementScreenState extends State<AchievementScreen> {
       const Color.fromARGB(255, 135, 135, 135),
     ];
 
-    return PieChart(
-      dataMap: dataMap,
-      colorList: colorList,
-      chartType: ChartType.ring,
-      chartRadius: MediaQuery.of(context).size.width / 2.7,
-      legendOptions: const LegendOptions(
-        showLegendsInRow: true,
-        legendPosition: LegendPosition.bottom,
-        showLegends: true,
-        legendTextStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+    return Padding(
+      padding: const EdgeInsets.only(top: 20.0),
+      child: PieChart(
+        dataMap: dataMap,
+        colorList: colorList,
+        chartType: ChartType.ring,
+        chartRadius: MediaQuery.of(context).size.width / 2.7,
+        legendOptions: const LegendOptions(
+          showLegendsInRow: true,
+          legendPosition: LegendPosition.bottom,
+          showLegends: true,
+          legendTextStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+        ),
       ),
+    );
+  }
+
+  Widget _buildAlternativeView(List<Challenge> challenges) {
+    int completedChallenges = challenges
+        .where(
+            (challenge) => challenge.userProgress == challenge.progress.length)
+        .length;
+    int incompletedChallenges = challenges
+        .where(
+            (challenge) => challenge.userProgress < challenge.progress.length)
+        .length;
+
+    int sportChallenges =
+        challenges.where((challenge) => challenge.category == 'Sport').length;
+    int nutritionChallenges = challenges
+        .where((challenge) => challenge.category == 'Nutrition')
+        .length;
+
+    return Column(
+      children: [
+        _buildPieChartCompletion(completedChallenges, incompletedChallenges),
+        const SizedBox(height: 20),
+        _buildPieChartCategory(sportChallenges, nutritionChallenges),
+      ],
     );
   }
 
@@ -170,9 +210,6 @@ class _AchievementScreenState extends State<AchievementScreen> {
         appBar: AppBar(
           title: const Text('Errungenschaften'),
           bottom: const TabBar(
-            labelColor: Colors.white,
-            indicatorColor: Colors.white,
-            unselectedLabelColor: Colors.white70,
             tabs: [
               Tab(
                 text: 'Tabelle',
@@ -240,10 +277,10 @@ class _AchievementScreenState extends State<AchievementScreen> {
                             .length;
             
                         return Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             _buildPieChartCompletion(
                                 completedChallenges, incompletedChallenges),
+                            const SizedBox(height: 40),
                             _buildPieChartCategory(
                                 sportChallenges, nutritionChallenges),
                           ],
