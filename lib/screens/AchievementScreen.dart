@@ -176,7 +176,7 @@ class _AchievementScreenState extends State<AchievementScreen> {
                 text: 'Tabelle',
               ),
               Tab(
-                text: 'Kuchendiagramm'
+                text: 'Diagramm'
                 ),
             ],
           ),
